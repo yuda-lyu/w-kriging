@@ -1,0 +1,4 @@
+python kriging.py eyJmcEluIjogImlucHV0Lmpzb24iLCAiZnBPdXQiOiAib3V0cHV0Lmpzb24iLCAib3B0Ijoge319
+pause
+
+#測試版使用
