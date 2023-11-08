@@ -146,7 +146,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="WKriging.mjs.html">WKriging.mjs</a>, <a href="WKriging.mjs.html#line147">line 147</a>
+        <a href="WKriging.mjs.html">WKriging.mjs</a>, <a href="WKriging.mjs.html#line171">line 171</a>
     </li></ul></dd>
     
 
@@ -193,7 +193,7 @@
 
     <h5 class="h5-examples">Example</h5>
     
-    <pre class="prettyprint"><code>async function test2d() {    let psSrc = [        {            x: -0.1, y: -0.1, z: 0        },        {            x: 1, y: 0, z: 0        },        {            x: 1, y: 1, z: 10        },        {            x: 0, y: 1, z: 0        },    ]    let psTar = [        { x: 0.1, y: 0.95 },    ]    let opt = {        variogram_model: 'gaussian',        nlags: 9,    }    let r = await WKriging(psSrc, psTar, opt)    console.log('test2d', r)    // => test2d [ { x: 0.1, y: 0.95, z: 1.8997805977145759 } ]}test2d()    .catch((err) => {        console.log('catch', err)    })async function test3d() {    let psSrc = [        {            x: -0.1, y: -0.1, z: -0.1, v: 0        },        {            x: 1, y: 0, z: 0, v: 0        },        {            x: 1, y: 1, z: 0, v: 0        },        {            x: 0, y: 0, z: 1, v: 0        },        {            x: 1, y: 0, z: 1, v: 0        },        {            x: 1, y: 1, z: 1, v: 10        },    ]    let psTar = [        {            x: 0.1, y: 0.1, z: 0.95        },    ]    let opt = {        variogram_model: 'gaussian',        nlags: 9,    }    let r = await WKriging(psSrc, psTar, opt)    console.log('test3d', r)    // => test3d [ { x: 0.1, y: 0.1, z: 0.95, v: 1.666666666666666 } ]}test3d()    .catch((err) => {        console.log('catch', err)    })</code></pre>
+    <pre class="prettyprint"><code>async function test2d1() {    let psSrc = [        {            x: -0.1, y: -0.1, z: 0        },        {            x: 1, y: 0, z: 0        },        {            x: 1, y: 1, z: 10        },        {            x: 0, y: 1, z: 0        },    ]    let psTar = [        { x: 0.1, y: 0.95 },    ]    let opt = {        variogram_model: 'gaussian',        nlags: 9,    }    let r = await WKriging(psSrc, psTar, opt)    console.log('test2d1', r)    // => test2d [ { x: 0.1, y: 0.95, z: 1.8997805977145759 } ]}test2d1()    .catch((err) => {        console.log('catch', err)    })async function test2d2() {    let psSrc = [{ x: 243, y: 206, z: 95 }, { x: 233, y: 225, z: 146 }, { x: 21, y: 325, z: 22 }, { x: 953, y: 28, z: 223 }, { x: 1092, y: 290, z: 39 }, { x: 744, y: 200, z: 191 }, { x: 174, y: 3, z: 22 }, { x: 537, y: 368, z: 249 }, { x: 1151, y: 371, z: 86 }, { x: 814, y: 252, z: 125 }]    let psTar = [{        x: 243,        y: 205,    }]    let opt = {        variogram_model: 'exponential',        nlags: 9,    }    let r = await WKriging(psSrc, psTar, opt)    console.log('test2d2', r)    // => test2d [ { x: 243, y: 205, z: 94.89492366904084 } ]}test2d2()    .catch((err) => {        console.log('catch', err)    })async function test3d1() {    let psSrc = [        {            x: -0.1, y: -0.1, z: -0.1, v: 0        },        {            x: 1, y: 0, z: 0, v: 0        },        {            x: 1, y: 1, z: 0, v: 0        },        {            x: 0, y: 0, z: 1, v: 0        },        {            x: 1, y: 0, z: 1, v: 0        },        {            x: 1, y: 1, z: 1, v: 10        },    ]    let psTar = [        {            x: 0.1, y: 0.1, z: 0.95        },    ]    let opt = {        variogram_model: 'gaussian',        nlags: 9,    }    let r = await WKriging(psSrc, psTar, opt)    console.log('test3d1', r)    // => test3d [ { x: 0.1, y: 0.1, z: 0.95, v: 1.666666666666666 } ]}test3d1()    .catch((err) => {        console.log('catch', err)    })</code></pre>
 
 
 
@@ -302,166 +302,6 @@
 
         <tr>
             
-                <td class="name"><code>opt.keyX</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>'x'</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>輸入點物件之x欄位字串，為座標，預設'x'</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>opt.keyY</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>'y'</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>輸入點物件之y欄位字串，為座標，預設'y'</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>opt.keyZ</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>'z'</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>輸入點物件之z欄位字串，若為二維則為觀測值，若為三維則為座標，預設'z'</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>opt.keyV</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>'v'</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>輸入點物件之v欄位字串，為觀測值，預設'v'</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
                 <td class="name"><code>opt</code></td>
             
 
@@ -525,6 +365,166 @@
 
         <tr>
             
+                <td class="name"><code>keyX</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>'x'</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>輸入點物件之x欄位字串，為座標，預設'x'</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>keyY</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>'y'</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>輸入點物件之y欄位字串，為座標，預設'y'</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>keyZ</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>'z'</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>輸入點物件之z欄位字串，若為二維則為觀測值，若為三維則為座標，預設'z'</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>keyV</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>'v'</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>輸入點物件之v欄位字串，為觀測值，預設'v'</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>variogram_model</code></td>
             
 
@@ -553,10 +553,12 @@
             
                 <td class="default">
                 
+                    <code>'exponential'</code>
+                
                 </td>
             
 
-            <td class="description last"><p>輸入變異圖模式字串，可選'linear'、'power'、'gaussian'、'spherical'、'exponential'、'hole-effect'，其定義詳見pykrige，預設'gaussian'</p></td>
+            <td class="description last"><p>輸入變異圖模式字串，可選'linear'、'power'、'gaussian'、'spherical'、'exponential'、'hole-effect'，其定義詳見pykrige，預設'exponential'</p></td>
         </tr>
 
     
@@ -671,7 +673,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.2</a> on Wed Nov 08 2023 21:17:36 GMT+0800 (台北標準時間) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.2</a> on Wed Nov 08 2023 23:47:49 GMT+0800 (台北標準時間) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>
