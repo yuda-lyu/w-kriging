@@ -93,7 +93,7 @@ function getExecPath(fd) {
  *
  *     let r = await WKriging(psSrc, psTar, opt)
  *     console.log('test2d', r)
- *     // => test2d [ 1.8997805977145759 ]
+ *     // => test2d [ { x: 0.1, y: 0.95, z: 1.8997805977145759 } ]
  *
  * }
  * test2d()
@@ -135,7 +135,7 @@ function getExecPath(fd) {
  *
  *     let r = await WKriging(psSrc, psTar, opt)
  *     console.log('test3d', r)
- *     // => test3d [ 1.666666666666666 ]
+ *     // => test3d [ { x: 0.1, y: 0.1, z: 0.95, v: 1.666666666666666 } ]
  *
  * }
  * test3d()
@@ -361,7 +361,33 @@ async function WKriging(psSrc, psTar, opt = {}) {
         return Promise.reject(errTemp)
     }
 
-    return output
+    //rs
+    let rs = []
+    each(arrTar, (p, k) => {
+
+        //v
+        let v = get(output, k, null)
+
+        //push
+        if (dtype === '2d') {
+            rs.push({
+                [keyX]: p[0],
+                [keyY]: p[1],
+                [keyZ]: v,
+            })
+        }
+        else { //dtype==='3d'
+            rs.push({
+                [keyX]: p[0],
+                [keyY]: p[1],
+                [keyZ]: p[2],
+                [keyV]: v,
+            })
+        }
+
+    })
+
+    return rs
 }
 
 

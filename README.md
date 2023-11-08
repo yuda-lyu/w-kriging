@@ -56,7 +56,7 @@ async function test2d() {
 
     let r = await WKriging(psSrc, psTar, opt)
     console.log('test2d', r)
-    // => test2d [ 1.8997805977145759 ]
+    // => test2d [ { x: 0.1, y: 0.95, z: 1.8997805977145759 } ]
 
 }
 test2d()
@@ -99,7 +99,7 @@ async function test3d() {
 
     let r = await WKriging(psSrc, psTar, opt)
     console.log('test3d', r)
-    // => test3d [ 1.666666666666666 ]
+    // => test3d [ { x: 0.1, y: 0.1, z: 0.95, v: 1.666666666666666 } ]
 
 }
 test3d()
