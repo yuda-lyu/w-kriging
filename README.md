@@ -9,7 +9,7 @@ A tool for kriging.
 [![jsdelivr download](https://img.shields.io/jsdelivr/npm/hm/w-kriging.svg)](https://www.jsdelivr.com/package/npm/w-kriging)
 
 ## Documentation
-To view documentation or get support, visit [docs](https://yuda-lyu.github.io/w-kriging/global.htm).
+To view documentation or get support, visit [docs](https://yuda-lyu.github.io/w-kriging/global.html).
 
 ## Core
 > `w-kriging` is basing on the `pykrige` from `python`.
