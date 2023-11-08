@@ -89,10 +89,10 @@ def kgn2d(src_xyz, pred_xy, opt):
     x=[]
     y=[]
     z=[]
-    for t in src_xyz:
-        x.append(t[0])
-        y.append(t[1])
-        z.append(t[2])
+    for t in src_xyz: 
+        x.append(float(t[0]))
+        y.append(float(t[1]))
+        z.append(float(t[2]))
 
     #ok
     OK = OrdinaryKriging(x, y, z, variogram_model=_variogram_model,nlags=_nlags)
@@ -100,8 +100,8 @@ def kgn2d(src_xyz, pred_xy, opt):
     xp=[]
     yp=[]
     for t in pred_xy:
-        xp.append(t[0])
-        yp.append(t[1])
+        xp.append(float(t[0]))
+        yp.append(float(t[1]))
 
     #execute
     zp, ssp = OK.execute("points", xp, yp)
@@ -134,21 +134,21 @@ def kgn3d(src_xyzv, pred_xyz, opt):
     z=[]
     v=[]
     for t in src_xyzv:
-        x.append(t[0])
-        y.append(t[1])
-        z.append(t[2])
-        v.append(t[3])
+        x.append(float(t[0]))
+        y.append(float(t[1]))
+        z.append(float(t[2]))
+        v.append(float(t[3]))
 
     #ok
     OK = OrdinaryKriging3D(x, y, z, v, variogram_model=_variogram_model,nlags=_nlags)
-
+    
     xp=[]
     yp=[]
     zp=[]
     for t in pred_xyz:
-        xp.append(t[0])
-        yp.append(t[1])
-        zp.append(t[2])
+        xp.append(float(t[0]))
+        yp.append(float(t[1]))
+        zp.append(float(t[2]))
 
     #execute
     vp, ssp = OK.execute("points", xp, yp, zp)
@@ -272,7 +272,9 @@ if False:
     inp={
         'fpIn':'input3d.json',
         'fpOut':'output3d.json',
-        'opt':{},
+        'opt':{
+            'variogram_model':'exponential',
+        },
     }
     # print(o2j(inp))
     

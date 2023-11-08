@@ -57,17 +57,17 @@ function getExecPath(fd) {
  *
  * @param {Array} psSrc 輸入二維座標加觀測數據點陣列，為[{x:x1,y:y1,z:z1},{x:x2,y:y2,z:z2},...]點物件之陣列，亦可支援三維座標加觀測數據點陣列，為[{x:x1,y:y1,z:z1,v:v1},{x:x2,y:y2,z:z2,v:v2},...]點物件之陣列
  * @param {Array|Object} psTar 輸入二維座標點陣列或點物件，為[{x:x1,y:y1},{x:x2,y:y2},...]點物件之陣列，或{x:x1,y:y1}點物件，亦可支援三維座標點陣列或點物件，為[{x:x1,y:y1,z:z1},{x:x2,y:y2,z:z2},...]點物件之陣列，或{x:x1,y:y1,z:z1}點物件
+ * @param {Object} [opt={}] 輸入設定物件，預設{}
  * @param {String} [opt.keyX='x'] 輸入點物件之x欄位字串，為座標，預設'x'
  * @param {String} [opt.keyY='y'] 輸入點物件之y欄位字串，為座標，預設'y'
  * @param {String} [opt.keyZ='z'] 輸入點物件之z欄位字串，若為二維則為觀測值，若為三維則為座標，預設'z'
  * @param {String} [opt.keyV='v'] 輸入點物件之v欄位字串，為觀測值，預設'v'
- * @param {Object} [opt={}] 輸入設定物件，預設{}
- * @param {String} [opt.variogram_model] 輸入變異圖模式字串，可選'linear'、'power'、'gaussian'、'spherical'、'exponential'、'hole-effect'，其定義詳見pykrige，預設'gaussian'
+ * @param {String} [opt.variogram_model='exponential'] 輸入變異圖模式字串，可選'linear'、'power'、'gaussian'、'spherical'、'exponential'、'hole-effect'，其定義詳見pykrige，預設'exponential'
  * @param {Integer} [opt.nlags=9] 輸入變異圖統計直條圖數量整數，其定義詳見pykrige，預設9
  * @returns {Promise} 回傳Promise，resolve回傳成功訊息，reject回傳錯誤訊息
  * @example
  *
- * async function test2d() {
+ * async function test2d1() {
  *
  *     let psSrc = [
  *         {
@@ -92,16 +92,40 @@ function getExecPath(fd) {
  *     }
  *
  *     let r = await WKriging(psSrc, psTar, opt)
- *     console.log('test2d', r)
+ *     console.log('test2d1', r)
  *     // => test2d [ { x: 0.1, y: 0.95, z: 1.8997805977145759 } ]
  *
  * }
- * test2d()
+ * test2d1()
  *     .catch((err) => {
  *         console.log('catch', err)
  *     })
  *
- * async function test3d() {
+ * async function test2d2() {
+ *
+ *     let psSrc = [{ x: 243, y: 206, z: 95 }, { x: 233, y: 225, z: 146 }, { x: 21, y: 325, z: 22 }, { x: 953, y: 28, z: 223 }, { x: 1092, y: 290, z: 39 }, { x: 744, y: 200, z: 191 }, { x: 174, y: 3, z: 22 }, { x: 537, y: 368, z: 249 }, { x: 1151, y: 371, z: 86 }, { x: 814, y: 252, z: 125 }]
+ *
+ *     let psTar = [{
+ *         x: 243,
+ *         y: 205,
+ *     }]
+ *
+ *     let opt = {
+ *         variogram_model: 'exponential',
+ *         nlags: 9,
+ *     }
+ *
+ *     let r = await WKriging(psSrc, psTar, opt)
+ *     console.log('test2d2', r)
+ *     // => test2d [ { x: 243, y: 205, z: 94.89492366904084 } ]
+ *
+ * }
+ * test2d2()
+ *     .catch((err) => {
+ *         console.log('catch', err)
+ *     })
+ *
+ * async function test3d1() {
  *
  *     let psSrc = [
  *         {
@@ -134,11 +158,11 @@ function getExecPath(fd) {
  *     }
  *
  *     let r = await WKriging(psSrc, psTar, opt)
- *     console.log('test3d', r)
+ *     console.log('test3d1', r)
  *     // => test3d [ { x: 0.1, y: 0.1, z: 0.95, v: 1.666666666666666 } ]
  *
  * }
- * test3d()
+ * test3d1()
  *     .catch((err) => {
  *         console.log('catch', err)
  *     })
@@ -268,7 +292,7 @@ async function WKriging(psSrc, psTar, opt = {}) {
     //variogram_model
     let variogram_model = get(opt, 'variogram_model', '')
     if (!isestr(variogram_model)) {
-        variogram_model = 'gaussian'
+        variogram_model = 'exponential'
     }
 
     //nlags
@@ -316,6 +340,7 @@ async function WKriging(psSrc, psTar, opt = {}) {
             nlags,
         },
     }
+    // console.log('inp', inp)
 
     //input to b64
     let cInput = JSON.stringify(inp)
