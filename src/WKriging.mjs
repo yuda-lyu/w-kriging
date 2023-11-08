@@ -2,6 +2,7 @@ import path from 'path'
 import fs from 'fs'
 import process from 'process'
 import get from 'lodash/get'
+import each from 'lodash/each'
 import genID from 'wsemi/src/genID.mjs'
 import str2b64 from 'wsemi/src/str2b64.mjs'
 import j2o from 'wsemi/src/j2o.mjs'
@@ -10,9 +11,11 @@ import fsIsFile from 'wsemi/src/fsIsFile.mjs'
 import isestr from 'wsemi/src/isestr.mjs'
 import isarr from 'wsemi/src/isarr.mjs'
 import isearr from 'wsemi/src/isearr.mjs'
+import iseobj from 'wsemi/src/iseobj.mjs'
 import isnum from 'wsemi/src/isnum.mjs'
 import cint from 'wsemi/src/cint.mjs'
 import cstr from 'wsemi/src/cstr.mjs'
+import cdbl from 'wsemi/src/cdbl.mjs'
 
 
 let fdSrv = path.resolve()
@@ -52,8 +55,12 @@ function getExecPath(fd) {
 /**
  * Kriging內外插值，支援2D與3D
  *
- * @param {Array} arrSrc 輸入觀測數據陣列，可輸入二維座標加觀測數據陣列[[x1,y1,v1],[x2,y2,v2],...]，或三維座標加觀測數據陣列[[x1,y1,z1,v1],[x2,y2,z2,v2],...]
- * @param {Array} arrPred 輸入預測數據陣列，可輸入二維座標陣列[[px1,py1],[px2,py2],...]，或三維座標加觀測數據陣列[[px1,py1,pz1],[px2,py2,pz2],...]
+ * @param {Array} psSrc 輸入二維座標加觀測數據點陣列，為[{x:x1,y:y1,z:z1},{x:x2,y:y2,z:z2},...]點物件之陣列，亦可支援三維座標加觀測數據點陣列，為[{x:x1,y:y1,z:z1,v:v1},{x:x2,y:y2,z:z2,v:v2},...]點物件之陣列
+ * @param {Array|Object} psTar 輸入二維座標點陣列或點物件，為[{x:x1,y:y1},{x:x2,y:y2},...]點物件之陣列，或{x:x1,y:y1}點物件，亦可支援三維座標點陣列或點物件，為[{x:x1,y:y1,z:z1},{x:x2,y:y2,z:z2},...]點物件之陣列，或{x:x1,y:y1,z:z1}點物件
+ * @param {String} [opt.keyX='x'] 輸入點物件之x欄位字串，為座標，預設'x'
+ * @param {String} [opt.keyY='y'] 輸入點物件之y欄位字串，為座標，預設'y'
+ * @param {String} [opt.keyZ='z'] 輸入點物件之z欄位字串，若為二維則為觀測值，若為三維則為座標，預設'z'
+ * @param {String} [opt.keyV='v'] 輸入點物件之v欄位字串，為觀測值，預設'v'
  * @param {Object} [opt={}] 輸入設定物件，預設{}
  * @param {String} [opt.variogram_model] 輸入變異圖模式字串，可選'linear'、'power'、'gaussian'、'spherical'、'exponential'、'hole-effect'，其定義詳見pykrige，預設'gaussian'
  * @param {Integer} [opt.nlags=9] 輸入變異圖統計直條圖數量整數，其定義詳見pykrige，預設9
@@ -63,13 +70,21 @@ function getExecPath(fd) {
  * async function test2d() {
  *
  *     let psSrc = [
- *         [-0.1, -0.1, 0],
- *         [1, 0, 0],
- *         [1, 1, 10],
- *         [0, 1, 0]
+ *         {
+ *             x: -0.1, y: -0.1, z: 0
+ *         },
+ *         {
+ *             x: 1, y: 0, z: 0
+ *         },
+ *         {
+ *             x: 1, y: 1, z: 10
+ *         },
+ *         {
+ *             x: 0, y: 1, z: 0
+ *         },
  *     ]
  *     let psTar = [
- *         [0.1, 0.95],
+ *         { x: 0.1, y: 0.95 },
  *     ]
  *     let opt = {
  *         variogram_model: 'gaussian',
@@ -89,15 +104,29 @@ function getExecPath(fd) {
  * async function test3d() {
  *
  *     let psSrc = [
- *         [-0.1, -0.1, -0.1, 0],
- *         [1, 0, 0, 0],
- *         [1, 1, 0, 0],
- *         [0, 0, 1, 0],
- *         [1, 0, 1, 0],
- *         [1, 1, 1, 10]
+ *         {
+ *             x: -0.1, y: -0.1, z: -0.1, v: 0
+ *         },
+ *         {
+ *             x: 1, y: 0, z: 0, v: 0
+ *         },
+ *         {
+ *             x: 1, y: 1, z: 0, v: 0
+ *         },
+ *         {
+ *             x: 0, y: 0, z: 1, v: 0
+ *         },
+ *         {
+ *             x: 1, y: 0, z: 1, v: 0
+ *         },
+ *         {
+ *             x: 1, y: 1, z: 1, v: 10
+ *         },
  *     ]
  *     let psTar = [
- *         [0.1, 0.1, 0.95],
+ *         {
+ *             x: 0.1, y: 0.1, z: 0.95
+ *         },
  *     ]
  *     let opt = {
  *         variogram_model: 'gaussian',
@@ -115,7 +144,7 @@ function getExecPath(fd) {
  *     })
  *
  */
-async function WKriging(arrSrc, arrPred, opt = {}) {
+async function WKriging(psSrc, psTar, opt = {}) {
     let errTemp = null
 
     //isWindows
@@ -123,15 +152,118 @@ async function WKriging(arrSrc, arrPred, opt = {}) {
         return Promise.reject('operating system is not windows')
     }
 
-    //check
-    if (!isearr(arrSrc)) {
-        return Promise.reject('invalid arrSrc')
+    //check psSrc
+    if (!isearr(psSrc)) {
+        return Promise.reject('psSrc is not an array')
     }
 
-    //check
-    if (!isearr(arrPred)) {
-        return Promise.reject('invalid arrPred')
+    //check psTar
+    if (!iseobj(psTar) && !isearr(psTar)) {
+        return Promise.reject('psTar is not an object or array')
     }
+
+    //isOne
+    let isOne = iseobj(psTar)
+    if (isOne) {
+        psTar = [psTar]
+    }
+
+    //keyX
+    let keyX = get(opt, 'keyX')
+    if (!isestr(keyX)) {
+        keyX = 'x'
+    }
+
+    //keyY
+    let keyY = get(opt, 'keyY')
+    if (!isestr(keyY)) {
+        keyY = 'y'
+    }
+
+    //keyZ
+    let keyZ = get(opt, 'keyZ')
+    if (!isestr(keyZ)) {
+        keyZ = 'z'
+    }
+
+    //keyV
+    let keyV = get(opt, 'keyV')
+    if (!isestr(keyV)) {
+        keyV = 'v'
+    }
+
+    //gv
+    let gv = (p) => {
+        let x = get(p, keyX, '')
+        let y = get(p, keyY, '')
+        let z = get(p, keyZ, '')
+        let v = get(p, keyV, '')
+        let bx = isnum(x)
+        let by = isnum(y)
+        let bz = isnum(z)
+        let bv = isnum(v)
+        if (bx) {
+            x = cdbl(x)
+        }
+        else {
+            x = null
+        }
+        if (by) {
+            y = cdbl(y)
+        }
+        else {
+            y = null
+        }
+        if (bz) {
+            z = cdbl(z)
+        }
+        else {
+            z = null
+        }
+        if (bv) {
+            v = cdbl(v)
+        }
+        else {
+            v = null
+        }
+        return { x, y, z, v }
+    }
+
+    //dtype
+    let dtype = '2d'
+    if (true) {
+        let p0 = get(psSrc, 0, {})
+        let r = gv(p0)
+        if (r.x !== null && r.y !== null && r.z !== null && r.v !== null) {
+            dtype = '3d'
+        }
+    }
+
+    //arrSrc
+    let arrSrc = []
+    each(psSrc, (p) => {
+        let r = gv(p)
+        if (dtype === '2d') {
+            arrSrc.push([r.x, r.y, r.z])
+        }
+        else { //dtype==='3d'
+            arrSrc.push([r.x, r.y, r.z, r.v])
+        }
+    })
+    // console.log('arrSrc', arrSrc)
+
+    //arrTar
+    let arrTar = []
+    each(psTar, (p) => {
+        let r = gv(p)
+        if (dtype === '2d') {
+            arrTar.push([r.x, r.y])
+        }
+        else { //dtype==='3d'
+            arrTar.push([r.x, r.y, r.z])
+        }
+    })
+    // console.log('arrTar', arrTar)
 
     //variogram_model
     let variogram_model = get(opt, 'variogram_model', '')
@@ -169,7 +301,7 @@ async function WKriging(arrSrc, arrPred, opt = {}) {
     //rIn
     let rIn = {
         src: arrSrc,
-        pred: arrPred,
+        pred: arrTar,
     }
 
     //save

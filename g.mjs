@@ -6,13 +6,21 @@ import WKriging from './src/WKriging.mjs'
 async function test2d() {
 
     let psSrc = [
-        [-0.1, -0.1, 0],
-        [1, 0, 0],
-        [1, 1, 10],
-        [0, 1, 0]
+        {
+            x: -0.1, y: -0.1, z: 0
+        },
+        {
+            x: 1, y: 0, z: 0
+        },
+        {
+            x: 1, y: 1, z: 10
+        },
+        {
+            x: 0, y: 1, z: 0
+        },
     ]
     let psTar = [
-        [0.1, 0.95],
+        { x: 0.1, y: 0.95 },
     ]
     let opt = {
         variogram_model: 'gaussian',
@@ -33,15 +41,29 @@ test2d()
 async function test3d() {
 
     let psSrc = [
-        [-0.1, -0.1, -0.1, 0],
-        [1, 0, 0, 0],
-        [1, 1, 0, 0],
-        [0, 0, 1, 0],
-        [1, 0, 1, 0],
-        [1, 1, 1, 10]
+        {
+            x: -0.1, y: -0.1, z: -0.1, v: 0
+        },
+        {
+            x: 1, y: 0, z: 0, v: 0
+        },
+        {
+            x: 1, y: 1, z: 0, v: 0
+        },
+        {
+            x: 0, y: 0, z: 1, v: 0
+        },
+        {
+            x: 1, y: 0, z: 1, v: 0
+        },
+        {
+            x: 1, y: 1, z: 1, v: 10
+        },
     ]
     let psTar = [
-        [0.1, 0.1, 0.95],
+        {
+            x: 0.1, y: 0.1, z: 0.95
+        },
     ]
     let opt = {
         variogram_model: 'gaussian',

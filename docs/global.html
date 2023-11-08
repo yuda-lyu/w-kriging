@@ -130,7 +130,7 @@
 
     
 
-    <h4 class="name" id="WKriging"><span class="type-signature type-signature-async">(async) </span>WKriging<span class="signature">(arrSrc, arrPred, opt<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id="WKriging"><span class="type-signature type-signature-async">(async) </span>WKriging<span class="signature">(psSrc, psTar, opt<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
 
     
 
@@ -146,7 +146,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="WKriging.mjs.html">WKriging.mjs</a>, <a href="WKriging.mjs.html#line118">line 118</a>
+        <a href="WKriging.mjs.html">WKriging.mjs</a>, <a href="WKriging.mjs.html#line147">line 147</a>
     </li></ul></dd>
     
 
@@ -193,7 +193,7 @@
 
     <h5 class="h5-examples">Example</h5>
     
-    <pre class="prettyprint"><code>async function test2d() {    let psSrc = [        [-0.1, -0.1, 0],        [1, 0, 0],        [1, 1, 10],        [0, 1, 0]    ]    let psTar = [        [0.1, 0.95],    ]    let opt = {        variogram_model: 'gaussian',        nlags: 9,    }    let r = await WKriging(psSrc, psTar, opt)    console.log('test2d', r)    // => test2d [ 1.8997805977145759 ]}test2d()    .catch((err) => {        console.log('catch', err)    })async function test3d() {    let psSrc = [        [-0.1, -0.1, -0.1, 0],        [1, 0, 0, 0],        [1, 1, 0, 0],        [0, 0, 1, 0],        [1, 0, 1, 0],        [1, 1, 1, 10]    ]    let psTar = [        [0.1, 0.1, 0.95],    ]    let opt = {        variogram_model: 'gaussian',        nlags: 9,    }    let r = await WKriging(psSrc, psTar, opt)    console.log('test3d', r)    // => test3d [ 1.666666666666666 ]}test3d()    .catch((err) => {        console.log('catch', err)    })</code></pre>
+    <pre class="prettyprint"><code>async function test2d() {    let psSrc = [        {            x: -0.1, y: -0.1, z: 0        },        {            x: 1, y: 0, z: 0        },        {            x: 1, y: 1, z: 10        },        {            x: 0, y: 1, z: 0        },    ]    let psTar = [        { x: 0.1, y: 0.95 },    ]    let opt = {        variogram_model: 'gaussian',        nlags: 9,    }    let r = await WKriging(psSrc, psTar, opt)    console.log('test2d', r)    // => test2d [ 1.8997805977145759 ]}test2d()    .catch((err) => {        console.log('catch', err)    })async function test3d() {    let psSrc = [        {            x: -0.1, y: -0.1, z: -0.1, v: 0        },        {            x: 1, y: 0, z: 0, v: 0        },        {            x: 1, y: 1, z: 0, v: 0        },        {            x: 0, y: 0, z: 1, v: 0        },        {            x: 1, y: 0, z: 1, v: 0        },        {            x: 1, y: 1, z: 1, v: 10        },    ]    let psTar = [        {            x: 0.1, y: 0.1, z: 0.95        },    ]    let opt = {        variogram_model: 'gaussian',        nlags: 9,    }    let r = await WKriging(psSrc, psTar, opt)    console.log('test3d', r)    // => test3d [ 1.666666666666666 ]}test3d()    .catch((err) => {        console.log('catch', err)    })</code></pre>
 
 
 
@@ -227,7 +227,7 @@
 
         <tr>
             
-                <td class="name"><code>arrSrc</code></td>
+                <td class="name"><code>psSrc</code></td>
             
 
             <td class="type">
@@ -256,20 +256,23 @@
                 </td>
             
 
-            <td class="description last"><p>輸入觀測數據陣列，可輸入二維座標加觀測數據陣列[[x1,y1,v1],[x2,y2,v2],...]，或三維座標加觀測數據陣列[[x1,y1,z1,v1],[x2,y2,z2,v2],...]</p></td>
+            <td class="description last"><p>輸入二維座標加觀測數據點陣列，為[{x:x1,y:y1,z:z1},{x:x2,y:y2,z:z2},...]點物件之陣列，亦可支援三維座標加觀測數據點陣列，為[{x:x1,y:y1,z:z1,v:v1},{x:x2,y:y2,z:z2,v:v2},...]點物件之陣列</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>arrPred</code></td>
+                <td class="name"><code>psTar</code></td>
             
 
             <td class="type">
             
                 
 <span class="param-type">Array</span>
+|
+
+<span class="param-type">Object</span>
 
 
 
@@ -292,7 +295,167 @@
                 </td>
             
 
-            <td class="description last"><p>輸入預測數據陣列，可輸入二維座標陣列[[px1,py1],[px2,py2],...]，或三維座標加觀測數據陣列[[px1,py1,pz1],[px2,py2,pz2],...]</p></td>
+            <td class="description last"><p>輸入二維座標點陣列或點物件，為[{x:x1,y:y1},{x:x2,y:y2},...]點物件之陣列，或{x:x1,y:y1}點物件，亦可支援三維座標點陣列或點物件，為[{x:x1,y:y1,z:z1},{x:x2,y:y2,z:z2},...]點物件之陣列，或{x:x1,y:y1,z:z1}點物件</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>opt.keyX</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>'x'</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>輸入點物件之x欄位字串，為座標，預設'x'</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>opt.keyY</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>'y'</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>輸入點物件之y欄位字串，為座標，預設'y'</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>opt.keyZ</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>'z'</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>輸入點物件之z欄位字串，若為二維則為觀測值，若為三維則為座標，預設'z'</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>opt.keyV</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>'v'</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>輸入點物件之v欄位字串，為觀測值，預設'v'</p></td>
         </tr>
 
     
@@ -508,7 +671,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.2</a> on Wed Nov 08 2023 20:05:01 GMT+0800 (台北標準時間) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.2</a> on Wed Nov 08 2023 20:47:10 GMT+0800 (台北標準時間) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>
