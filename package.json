@@ -1,6 +1,6 @@
 {
   "name": "w-kriging",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "dist/w-kriging.umd.js",
   "dependencies": {
     "lodash": "^4.17.21",

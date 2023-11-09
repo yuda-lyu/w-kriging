@@ -378,7 +378,7 @@ async function WKriging(psSrc, psTar, opt = {}) {
 
     //check
     if (!isarr(output)) {
-        errTemp = cstr(output)
+        errTemp = `output[${cstr(output)}] is not an array`
     }
 
     //check
@@ -411,6 +411,10 @@ async function WKriging(psSrc, psTar, opt = {}) {
         }
 
     })
+
+    if (isOne) {
+        rs = rs[0]
+    }
 
     return rs
 }
