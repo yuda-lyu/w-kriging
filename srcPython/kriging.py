@@ -69,6 +69,7 @@ def writeText(fn,str):
 
 
 def kgn2d(src_xyz, pred_xy, opt):
+    state=''
     
     _variogram_model='gaussian'
     try:
@@ -93,25 +94,36 @@ def kgn2d(src_xyz, pred_xy, opt):
         x.append(float(t[0]))
         y.append(float(t[1]))
         z.append(float(t[2]))
-
-    #ok
-    OK = OrdinaryKriging(x, y, z, variogram_model=_variogram_model,nlags=_nlags)
-
+        
     xp=[]
     yp=[]
+    zp=[]
     for t in pred_xy:
         xp.append(float(t[0]))
         yp.append(float(t[1]))
+        zp.append(0)
 
-    #execute
-    zp, ssp = OK.execute("points", xp, yp)
-    zp=zp.tolist()
+    try:
+
+        OK = OrdinaryKriging(x, y, z, variogram_model=_variogram_model,nlags=_nlags)
+        # print(OK)
+            
+        #execute
+        zp, ssp = OK.execute("points", xp, yp)
+        zp=zp.tolist()
+        # print(zp)
+
+    except:
+        #若大半z值為0, Python會出現錯誤: Each lower bound must be strictly less than each upper bound.
+        state=getError()
+        # print(state)
     # print(zp)
 
     return zp
 
 
 def kgn3d(src_xyzv, pred_xyz, opt):
+    state=''
     
     _variogram_model='gaussian'
     try:
@@ -139,22 +151,32 @@ def kgn3d(src_xyzv, pred_xyz, opt):
         z.append(float(t[2]))
         v.append(float(t[3]))
 
-    #ok
-    OK = OrdinaryKriging3D(x, y, z, v, variogram_model=_variogram_model,nlags=_nlags)
-    
     xp=[]
     yp=[]
     zp=[]
+    vp=[]
     for t in pred_xyz:
         xp.append(float(t[0]))
         yp.append(float(t[1]))
         zp.append(float(t[2]))
+        vp.append(0)
 
-    #execute
-    vp, ssp = OK.execute("points", xp, yp, zp)
-    vp=vp.tolist()
+    try:
+
+        OK = OrdinaryKriging3D(x, y, z, v, variogram_model=_variogram_model,nlags=_nlags)
+        # print(OK)
+                
+        #execute
+        vp, ssp = OK.execute("points", xp, yp, zp)
+        vp=vp.tolist()
+        # print(vp)
+
+    except:
+        #若大半z值為0, Python會出現錯誤: Each lower bound must be strictly less than each upper bound.
+        state=getError()
+        # print(state)
     # print(vp)
-
+    
     return vp
 
 
@@ -262,8 +284,17 @@ if True:
     
 if False:
     #產生測試輸入b64
+    #若測試階段python得要調用有安裝pykrige者
     
     #inp
+    # inp={
+    #     'fpIn':'[abs.fp]\\fpIn.json',
+    #     'fpOut':'[abs.fp]\\fpOut.json',
+    #     'opt':{
+    #         'variogram_model':'spherical',
+    #         'nlags': 9,
+    #     },
+    # }
     # inp={
     #     'fpIn':'input2d.json',
     #     'fpOut':'output2d.json',
