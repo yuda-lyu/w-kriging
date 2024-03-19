@@ -6,6 +6,7 @@ A tool for kriging.
 [![license](https://img.shields.io/npm/l/w-kriging.svg?style=flat)](https://npmjs.org/package/w-kriging) 
 [![gzip file size](http://img.badgesize.io/yuda-lyu/w-kriging/master/dist/w-kriging.umd.js.svg?compression=gzip)](https://github.com/yuda-lyu/w-kriging)
 [![npm download](https://img.shields.io/npm/dt/w-kriging.svg)](https://npmjs.org/package/w-kriging) 
+[![npm download](https://img.shields.io/npm/dm/w-kriging.svg)](https://npmjs.org/package/w-kriging) 
 [![jsdelivr download](https://img.shields.io/jsdelivr/npm/hm/w-kriging.svg)](https://www.jsdelivr.com/package/npm/w-kriging)
 
 ## Documentation
@@ -16,7 +17,7 @@ To view documentation or get support, visit [docs](https://yuda-lyu.github.io/w-
 
 ## Installation
 ### Using npm(ES6 module):
-> **Note:** `w-kriging` is mainly dependent on `lodash` and `wsemi`, and should run in `Windows`.
+> **Note:** `w-kriging` is mainly dependent on `lodash-es` and `wsemi`, and should run in `Windows`.
 
 ```alias
 npm i w-kriging
