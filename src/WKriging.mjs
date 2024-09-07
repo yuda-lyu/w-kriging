@@ -55,7 +55,7 @@ function getExecPath(fd) {
 /**
  * Kriging內外插值，支援2D與3D
  *
- * @param {Array} psSrc 輸入二維座標加觀測數據點陣列，為[{x:x1,y:y1,z:z1},{x:x2,y:y2,z:z2},...]點物件之陣列，亦可支援三維座標加觀測數據點陣列，為[{x:x1,y:y1,z:z1,v:v1},{x:x2,y:y2,z:z2,v:v2},...]點物件之陣列
+ * @param {Array} psSrc 輸入二維座標加觀測數據點陣列，為[{x:x1,y:y1,z:z1},{x:x2,y:y2,z:z2},...]點物件之陣列，或可為[[x1,y1,z1],[x2,y2,z2],...]點陣列之陣列，亦可支援三維座標加觀測數據點陣列，為[{x:x1,y:y1,z:z1,v:v1},{x:x2,y:y2,z:z2,v:v2},...]點物件之陣列，或可為[[x1,y1,z1,v1],[x2,y2,z2,v2],...]點陣列之陣列
  * @param {Array|Object} psTar 輸入二維座標點陣列或點物件，為[{x:x1,y:y1},{x:x2,y:y2},...]點物件之陣列，或{x:x1,y:y1}點物件，亦可支援三維座標點陣列或點物件，為[{x:x1,y:y1,z:z1},{x:x2,y:y2,z:z2},...]點物件之陣列，或{x:x1,y:y1,z:z1}點物件
  * @param {Object} [opt={}] 輸入設定物件，預設{}
  * @param {String} [opt.keyX='x'] 輸入點物件之x欄位字串，為座標，預設'x'
@@ -219,9 +219,13 @@ async function WKriging(psSrc, psTar, opt = {}) {
     //gv
     let gv = (p) => {
         let x = get(p, keyX, '')
+        let p0 = get(p, 0, '')
         let y = get(p, keyY, '')
+        let p1 = get(p, 1, '')
         let z = get(p, keyZ, '')
+        let p2 = get(p, 2, '')
         let v = get(p, keyV, '')
+        let p3 = get(p, 3, '')
         let bx = isnum(x)
         let by = isnum(y)
         let bz = isnum(z)
@@ -229,11 +233,17 @@ async function WKriging(psSrc, psTar, opt = {}) {
         if (bx) {
             x = cdbl(x)
         }
+        else if (isnum(p0)) {
+            x = cdbl(p0)
+        }
         else {
             x = null
         }
         if (by) {
             y = cdbl(y)
+        }
+        else if (isnum(p1)) {
+            y = cdbl(p1)
         }
         else {
             y = null
@@ -241,11 +251,17 @@ async function WKriging(psSrc, psTar, opt = {}) {
         if (bz) {
             z = cdbl(z)
         }
+        else if (isnum(p2)) {
+            z = cdbl(p2)
+        }
         else {
             z = null
         }
         if (bv) {
             v = cdbl(v)
+        }
+        else if (isnum(p3)) {
+            v = cdbl(p3)
         }
         else {
             v = null

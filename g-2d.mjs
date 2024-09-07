@@ -63,4 +63,4 @@ test2d2()
     })
 
 
-//node --experimental-modules --es-module-specifier-resolution=node g-2d.mjs
+//node --experimental-modules g-2d.mjs

@@ -46,4 +46,4 @@ test3d1()
     })
 
 
-//node --experimental-modules --es-module-specifier-resolution=node g-3d.mjs
+//node --experimental-modules g-3d.mjs
