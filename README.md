@@ -12,12 +12,10 @@ A tool for kriging.
 To view documentation or get support, visit [docs](https://yuda-lyu.github.io/w-kriging/global.html).
 
 ## Core
-> `w-kriging` is basing on the `pykrige` from `python`.
+> `w-kriging` is based on the `pykrige` in `python`, and only run in `Windows`.
 
 ## Installation
 ### Using npm(ES6 module):
-> **Note:** `w-kriging` is mainly dependent on `lodash-es` and `wsemi`, and should run in `Windows`.
-
 ```alias
 npm i w-kriging
 ```

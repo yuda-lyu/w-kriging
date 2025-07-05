@@ -6,7 +6,7 @@ import each from 'lodash-es/each.js'
 import genID from 'wsemi/src/genID.mjs'
 import str2b64 from 'wsemi/src/str2b64.mjs'
 import j2o from 'wsemi/src/j2o.mjs'
-import execScript from 'wsemi/src/execScript.mjs'
+import execProcess from 'wsemi/src/execProcess.mjs'
 import fsIsFile from 'wsemi/src/fsIsFile.mjs'
 import isestr from 'wsemi/src/isestr.mjs'
 import isarr from 'wsemi/src/isarr.mjs'
@@ -21,34 +21,11 @@ import cdbl from 'wsemi/src/cdbl.mjs'
 let fdSrv = path.resolve()
 
 
+let fnExe = `kriging.exe`
+
+
 function isWindows() {
     return process.platform === 'win32'
-}
-
-
-function getExecFolder() {
-    let fnExe = `kriging.exe`
-    let fdExeSrc = `${fdSrv}/src/`
-    let fdExeNM = `${fdSrv}/node_modules/w-kriging/src/`
-
-    if (fsIsFile(`${fdExeSrc}${fnExe}`)) {
-        return fdExeSrc
-    }
-    else if (fsIsFile(`${fdExeNM}${fnExe}`)) {
-        return fdExeNM
-    }
-    else {
-        return { error: 'can not find executable file for kriging' }
-    }
-}
-
-
-function getExecPath(fd) {
-
-    //fn
-    let fn = `kriging.exe`
-
-    return `${fd}${fn}`
 }
 
 
@@ -319,7 +296,20 @@ async function WKriging(psSrc, psTar, opt = {}) {
     nlags = cint(nlags)
 
     //fdExe
-    let fdExe = getExecFolder()
+    let fdExe = ''
+    if (true) {
+        let fdExeSrc = `${fdSrv}/src/`
+        let fdExeNM = `${fdSrv}/node_modules/w-kriging/src/`
+        if (fsIsFile(`${fdExeSrc}${fnExe}`)) {
+            fdExe = fdExeSrc
+        }
+        else if (fsIsFile(`${fdExeNM}${fnExe}`)) {
+            fdExe = fdExeNM
+        }
+        else {
+            return Promise.reject('can not find executable file for kriging')
+        }
+    }
 
     //check
     if (get(fdExe, 'error')) {
@@ -327,7 +317,7 @@ async function WKriging(psSrc, psTar, opt = {}) {
     }
 
     //prog
-    let prog = getExecPath(fdExe)
+    let prog = `${fdExe}${fnExe}`
 
     //id
     let id = genID()
@@ -362,10 +352,10 @@ async function WKriging(psSrc, psTar, opt = {}) {
     let cInput = JSON.stringify(inp)
     let b64Input = str2b64(cInput)
 
-    //execScript
-    await execScript(prog, b64Input)
+    //execProcess
+    await execProcess(prog, b64Input)
         .catch((err) => {
-            console.log('WKriging execScript catch', err)
+            console.log('WKriging execProcess catch', err)
             errTemp = err
         })
 

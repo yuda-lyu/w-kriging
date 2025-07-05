@@ -46,4 +46,4 @@ test3d1()
     })
 
 
-//node --experimental-modules g-3d.mjs
+//node g-3d.mjs

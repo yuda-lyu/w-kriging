@@ -1,16 +1,16 @@
 {
   "name": "w-kriging",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "main": "dist/w-kriging.umd.js",
   "dependencies": {
     "lodash-es": "^4.17.21",
-    "wsemi": "^1.7.58"
+    "wsemi": "^1.8.9"
   },
   "devDependencies": {
-    "w-package-tools": "^1.0.75"
+    "w-package-tools": "^1.1.2"
   },
   "scripts": {
-    "test": "mocha --parallel --timeout 60000 --experimental-modules",
+    "test": "mocha --parallel --timeout 60000",
     "deploy": "gh-pages -d docs"
   },
   "repository": {

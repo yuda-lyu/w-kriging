@@ -69,22 +69,23 @@ def writeText(fn,str):
 
 
 def kgn2d(src_xyz, pred_xy, opt):
-    state=''
     
     _variogram_model='gaussian'
     try:
         _variogram_model=opt['variogram_model']
     except:
-        state=getError()
-        # print(state)
+        err=getError()
+        # print(err)
+
     # print(_variogram_model)
     
     _nlags=9
     try:
         _nlags=opt['nlags']
     except:
-        state=getError()
-        # print(state)
+        err=getError()
+        # print(err)
+
     # print(_nlags)
 
     x=[]
@@ -115,30 +116,32 @@ def kgn2d(src_xyz, pred_xy, opt):
 
     except:
         #若大半z值為0, Python會出現錯誤: Each lower bound must be strictly less than each upper bound.
-        state=getError()
-        # print(state)
+        err=getError()
+        # print(err)
+
     # print(zp)
 
     return zp
 
 
 def kgn3d(src_xyzv, pred_xyz, opt):
-    state=''
-    
+
     _variogram_model='gaussian'
     try:
         _variogram_model=opt['variogram_model']
     except:
-        state=getError()
-        # print(state)
+        err=getError()
+        # print(err)
+
     # print(_variogram_model)
     
     _nlags=9
     try:
         _nlags=opt['nlags']
     except:
-        state=getError()
-        # print(state)
+        err=getError()
+        # print(err)
+        
     # print(_nlags)
 
     x=[]
@@ -173,8 +176,9 @@ def kgn3d(src_xyzv, pred_xyz, opt):
 
     except:
         #若大半z值為0, Python會出現錯誤: Each lower bound must be strictly less than each upper bound.
-        state=getError()
-        # print(state)
+        err=getError()
+        # print(err)
+
     # print(vp)
     
     return vp
@@ -190,8 +194,9 @@ def kgn(src, pred, opt):
         elif n==4:
             dtype='3d'
     except:
-        state=getError()
-        # print(state)
+        err=getError()
+        # print(err)
+
     # print(_nlags)
 
     if dtype=='3d':
