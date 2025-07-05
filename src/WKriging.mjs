@@ -360,10 +360,14 @@ async function WKriging(psSrc, psTar, opt = {}) {
         })
 
     //read output
-    let j = fs.readFileSync(fpOut, 'utf8')
-    // console.log('j', j)
-    let output = j2o(j)
-    // console.log('output', output)
+    let output = null
+    try {
+        let j = fs.readFileSync(fpOut, 'utf8')
+        // console.log('j', j)
+        output = j2o(j)
+        // console.log('output', output)
+    }
+    catch (err) {}
 
     //unlinkSync
     try {
