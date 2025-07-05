@@ -6,8 +6,6 @@ import each from 'lodash-es/each.js'
 import genID from 'wsemi/src/genID.mjs'
 import str2b64 from 'wsemi/src/str2b64.mjs'
 import j2o from 'wsemi/src/j2o.mjs'
-import execProcess from 'wsemi/src/execProcess.mjs'
-import fsIsFile from 'wsemi/src/fsIsFile.mjs'
 import isestr from 'wsemi/src/isestr.mjs'
 import isarr from 'wsemi/src/isarr.mjs'
 import isearr from 'wsemi/src/isearr.mjs'
@@ -16,12 +14,11 @@ import isnum from 'wsemi/src/isnum.mjs'
 import cint from 'wsemi/src/cint.mjs'
 import cstr from 'wsemi/src/cstr.mjs'
 import cdbl from 'wsemi/src/cdbl.mjs'
+import fsIsFile from 'wsemi/src/fsIsFile.mjs'
+import execProcess from 'wsemi/src/execProcess.mjs'
 
 
 let fdSrv = path.resolve()
-
-
-let fnExe = `kriging.exe`
 
 
 function isWindows() {
@@ -295,6 +292,9 @@ async function WKriging(psSrc, psTar, opt = {}) {
     }
     nlags = cint(nlags)
 
+    //fnExe
+    let fnExe = `kriging.exe`
+
     //fdExe
     let fdExe = ''
     if (true) {
@@ -307,7 +307,7 @@ async function WKriging(psSrc, psTar, opt = {}) {
             fdExe = fdExeNM
         }
         else {
-            return Promise.reject('can not find executable file for kriging')
+            return Promise.reject('can not find folder for kriging')
         }
     }
 
@@ -355,7 +355,7 @@ async function WKriging(psSrc, psTar, opt = {}) {
     //execProcess
     await execProcess(prog, b64Input)
         .catch((err) => {
-            console.log('WKriging execProcess catch', err)
+            // console.log('execProcess catch', err)
             errTemp = err
         })
 
