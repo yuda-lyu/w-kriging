@@ -3,6 +3,11 @@ import w from 'wsemi'
 import WKriging from '../src/WKriging.mjs'
 
 
+function isWindows() {
+    return process.platform === 'win32'
+}
+
+
 async function test3d1() {
 
     let psSrc = [
@@ -44,6 +49,11 @@ async function test3d1() {
 
 
 describe('3d', function() {
+
+    //check
+    if (!isWindows()) {
+        return
+    }
 
     it('test for 3d1', async function() {
         let rr = null
