@@ -310,14 +310,11 @@ async function WKriging(psSrc, psTar, opt = {}) {
             return Promise.reject('can not find folder for kriging')
         }
     }
-
-    //check
-    if (get(fdExe, 'error')) {
-        return Promise.reject(fdExe.error)
-    }
+    // console.log('fdExe', fdExe)
 
     //prog
     let prog = `${fdExe}${fnExe}`
+    // console.log('prog', prog)
 
     //id
     let id = genID()
@@ -355,8 +352,8 @@ async function WKriging(psSrc, psTar, opt = {}) {
     //execProcess
     await execProcess(prog, b64Input)
         .catch((err) => {
-            // console.log('execProcess catch', err)
-            errTemp = err
+            console.log('execProcess catch', err)
+            errTemp = err.toString()
         })
 
     //read output
@@ -382,18 +379,13 @@ async function WKriging(psSrc, psTar, opt = {}) {
     catch (err) {}
 
     //check
-    if (errTemp !== null) {
+    if (errTemp) {
         return Promise.reject(errTemp)
     }
 
     //check
     if (!isarr(output)) {
-        errTemp = `output[${cstr(output)}] is not an array`
-    }
-
-    //check
-    if (errTemp !== null) {
-        return Promise.reject(errTemp)
+        return Promise.reject(`output[${cstr(output)}] is not an array`)
     }
 
     //rs
