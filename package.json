@@ -1,6 +1,6 @@
 {
   "name": "w-kriging",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "main": "dist/w-kriging.umd.js",
   "dependencies": {
     "lodash-es": "^4.17.21",
@@ -10,6 +10,7 @@
     "w-package-tools": "^1.1.2"
   },
   "scripts": {
+    "postinstall": "node scripts/install.mjs",
     "test": "mocha --parallel --timeout 60000",
     "deploy": "gh-pages -d docs"
   },
