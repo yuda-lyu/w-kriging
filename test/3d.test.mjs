@@ -1,5 +1,4 @@
 import assert from 'assert'
-import w from 'wsemi'
 import WKriging from '../src/WKriging.mjs'
 
 
@@ -56,16 +55,8 @@ describe('3d', function() {
     }
 
     it('test for 3d1', async function() {
-        let rr = null
-        let rt = null
-        if (w.isWindow()) {
-            rr = await test3d1()
-            rt = [{ x: 0.1, y: 0.1, z: 0.95, v: 1.666666666666666 }]
-        }
-        else {
-            rr = 1
-            rt = 1
-        }
+        let rr = await test3d1()
+        let rt = [{ x: 0.1, y: 0.1, z: 0.95, v: 1.666666666666666 }]
         assert.strict.deepEqual(rr, rt)
     })
 

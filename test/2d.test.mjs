@@ -1,5 +1,4 @@
 import assert from 'assert'
-import w from 'wsemi'
 import WKriging from '../src/WKriging.mjs'
 
 
@@ -70,30 +69,14 @@ describe('2d', function() {
     }
 
     it('test for 2d1', async function() {
-        let rr = null
-        let rt = null
-        if (w.isWindow()) {
-            rr = await test2d1()
-            rt = [{ x: 0.1, y: 0.95, z: 1.8997805977145759 }]
-        }
-        else {
-            rr = 1
-            rt = 1
-        }
+        let rr = await test2d1()
+        let rt = [{ x: 0.1, y: 0.95, z: 1.8997805977145759 }]
         assert.strict.deepEqual(rr, rt)
     })
 
     it('test for 2d2', async function() {
-        let rr = null
-        let rt = null
-        if (w.isWindow()) {
-            rr = await test2d2()
-            rt = [{ x: 243, y: 205, z: 94.89492366904084 }]
-        }
-        else {
-            rr = 1
-            rt = 1
-        }
+        let rr = await test2d2()
+        let rt = [{ x: 243, y: 205, z: 94.89492366904084 }]
         assert.strict.deepEqual(rr, rt)
     })
 
