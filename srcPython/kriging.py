@@ -289,7 +289,6 @@ if True:
     
 if False:
     #產生測試輸入b64
-    #若測試階段python得要調用有安裝pykrige者
     
     #inp
     # inp={
