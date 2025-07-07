@@ -42,7 +42,7 @@ async function test3d1() {
 }
 test3d1()
     .catch((err) => {
-        console.log('catch', err)
+        console.log(err)
     })
 
 

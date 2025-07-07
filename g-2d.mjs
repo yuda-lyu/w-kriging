@@ -59,7 +59,7 @@ async function test2d2() {
 }
 test2d2()
     .catch((err) => {
-        console.log('catch', err)
+        console.log(err)
     })
 
 
