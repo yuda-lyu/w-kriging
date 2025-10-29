@@ -15,6 +15,7 @@ To view documentation or get support, visit [docs](https://yuda-lyu.github.io/w-
 > `w-kriging` is based on the `pykrige` in `python`, and only run in `Windows`.
 
 ## Installation
+
 ### Using npm(ES6 module):
 ```alias
 npm i w-kriging
