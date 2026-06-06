@@ -51,7 +51,7 @@ def str2b64(v):
 def b642str(v):
     #base64字串轉字串
     import base64
-    return base64.b64decode(v)
+    return base64.b64decode(v).decode('utf-8')
 
 
 def readText(fn):
@@ -251,7 +251,7 @@ def core(b64):
         state='success'
     except:
         err=getError()
-        state='error: [core]'+err["message"]
+        state='error: '+str(err["message"])
 
     return state
 
@@ -273,7 +273,7 @@ def run():
         
     else:
         #print(sys.argv)
-        state='error: [run]invalid length of argv'
+        state='error: invalid length of argv'
     
     #print & flush
     print(state)
