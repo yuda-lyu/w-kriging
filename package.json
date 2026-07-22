@@ -1,13 +1,13 @@
 {
   "name": "w-kriging",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "main": "dist/w-kriging.umd.js",
   "dependencies": {
     "lodash-es": "^4.18.1",
-    "wsemi": "^1.8.55"
+    "wsemi": "^1.8.66"
   },
   "devDependencies": {
-    "w-package-tools": "^1.1.7"
+    "w-package-tools": "^1.1.11"
   },
   "scripts": {
     "postinstall": "node scripts/install.mjs",
