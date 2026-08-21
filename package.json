@@ -1,12 +1,12 @@
 {
   "name": "w-kriging",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "main": "dist/w-kriging.umd.js",
   "dependencies": {
-    "wsemi": "^1.8.78"
+    "wsemi": "^1.8.79"
   },
   "devDependencies": {
-    "w-package-tools": "^1.1.14"
+    "w-package-tools": "^1.1.15"
   },
   "scripts": {
     "postinstall": "node scripts/install.mjs",
