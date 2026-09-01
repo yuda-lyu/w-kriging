@@ -1,9 +1,9 @@
 {
   "name": "w-kriging",
-  "version": "1.0.26",
+  "version": "1.0.27",
   "main": "dist/w-kriging.umd.js",
   "dependencies": {
-    "wsemi": "^1.8.80"
+    "wsemi": "^1.8.81"
   },
   "devDependencies": {
     "w-package-tools": "^1.1.15"
