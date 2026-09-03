@@ -14,11 +14,8 @@ import isnum from 'wsemi/src/isnum.mjs'
 import cint from 'wsemi/src/cint.mjs'
 import cstr from 'wsemi/src/cstr.mjs'
 import cdbl from 'wsemi/src/cdbl.mjs'
-import fsIsFile from 'wsemi/src/fsIsFile.mjs'
 import execProcess from 'wsemi/src/execProcess.mjs'
-
-
-let fdSrv = path.resolve()
+import autoDownloadFiles from './autoDownloadFiles.mjs'
 
 
 function isWindows() {
@@ -292,29 +289,14 @@ async function WKriging(psSrc, psTar, opt = {}) {
     }
     nlags = cint(nlags)
 
-    //fnExe
-    let fnExe = `kriging.exe`
-
-    //fdExe
-    let fdExe = ''
-    if (true) {
-        let fdExeSrc = `${fdSrv}/src/`
-        let fdExeNM = `${fdSrv}/node_modules/w-kriging/src/`
-        if (fsIsFile(`${fdExeSrc}${fnExe}`)) {
-            fdExe = fdExeSrc
-        }
-        else if (fsIsFile(`${fdExeNM}${fnExe}`)) {
-            fdExe = fdExeNM
-        }
-        else {
-            return Promise.reject('can not find folder for kriging')
-        }
-    }
-    // console.log('fdExe', fdExe)
-
-    //prog
-    let prog = `${fdExe}${fnExe}`
+    //prog, 自動定位kriging.exe, 無檔案(安裝時npm封鎖scripts致postinstall未執行)則自動下載
+    let { fpExe } = await autoDownloadFiles()
+    let prog = fpExe
     // console.log('prog', prog)
+
+    //fdExe, prog所在資料夾, 供暫存json檔使用
+    let fdExe = `${path.dirname(prog)}/`
+    // console.log('fdExe', fdExe)
 
     //id
     let id = genID()
