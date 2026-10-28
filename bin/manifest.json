@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "pkg": "w-kriging",
+  "mode": "pinned",
+  "repo": "yuda-lyu/w-kriging",
+  "commit": "da009ee4178d632005829085bc341b7542550890",
+  "files": [
+    {
+      "name": "kriging.exe",
+      "path": "bin/kriging.exe",
+      "sha256": "bc4931f7e8bc0fc9e432d60c6c279cfcce8832c4ae7bfbd0b6e26a1c6da4de38",
+      "size": 57102329
+    }
+  ]
+}

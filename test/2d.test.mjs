@@ -1,5 +1,7 @@
 import assert from 'assert'
 import WKriging from '../src/WKriging.mjs'
+import { setBinEnv } from './tools/binEnv.mjs'
+import assertNear from './tools/assertNear.mjs'
 
 
 function isWindows() {
@@ -68,16 +70,29 @@ describe('2d', function() {
         return
     }
 
+    //env, 以repo內bin/kriging.exe建本機鏡像供檔(離線、不連外網), 並攔截全域fetch
+    let env = null
+
+    before(function() {
+        env = setBinEnv('2d')
+    })
+
+    after(function() {
+        env.restore()
+    })
+
     it('test for 2d1', async function() {
         let rr = await test2d1()
         let rt = [{ x: 0.1, y: 0.95, z: 1.8997805977145759 }]
-        assert.strict.deepEqual(rr, rt)
+        assertNear(rr, rt, 'z')
+        assert.strict.deepEqual(env.netCalls, [])
     })
 
     it('test for 2d2', async function() {
         let rr = await test2d2()
         let rt = [{ x: 243, y: 205, z: 94.89492366904084 }]
-        assert.strict.deepEqual(rr, rt)
+        assertNear(rr, rt, 'z')
+        assert.strict.deepEqual(env.netCalls, [])
     })
 
 })

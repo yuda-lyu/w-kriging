@@ -14,6 +14,10 @@
 }
 序列化成字串再轉base64即可
 
+9.執行檔存放與更新依制式規格(外部執行檔之存放下載校驗與離線，見sgud/rule/rulebook.md之R-BIN-EXE-01):
+  建置產物只放bin/kriging.exe，不要再更新src/kriging.exe(該檔為舊版相容而凍結，不入npm包)；
+  替換bin/kriging.exe後，提交並推GitHub，再以node toolg/genBinManifest.mjs --commit <該提交>產生bin/manifest.json
+
 ----------------------------------------------------------------------
 參考
 

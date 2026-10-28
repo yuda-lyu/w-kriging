@@ -14,6 +14,34 @@ To view documentation or get support, visit [docs](https://yuda-lyu.github.io/w-
 ## Core
 > `w-kriging` is based on the `pykrige` in `python`, and only run in `Windows`.
 
+## 外部執行檔
+
+本套件執行時需要下列外部執行檔，不含於 npm 包：
+
+| 檔名 | 用途 | 來源 |
+|---|---|---|
+| kriging.exe | 以 `pykrige` 進行克利金空間內插(僅 Windows；由 `srcPython/` 以 Python 打包而成) | 本套件 GitHub repo 之 `bin/`(釘選提交，網址見 `bin/manifest.json`) |
+
+- 首次使用到 `WKriging` 時自動下載(或預先呼叫 `ensureBins()`)，以 `bin/manifest.json` 所載之 SHA-256 與大小校驗後存於 `<套件根>/bin-cache/<sha256>/`；之後自快取取得(亦校驗，不符即重新取得)。安裝時不下載。執行時之暫存 json 寫於作業系統暫存資料夾，不寫快取資料夾。
+- 取不到執行檔時，`WKriging` 仍以字串 reject，內容為 `[code] message`(如 `[E_OFFLINE_MISSING] ...`)；`ensureBins()` 則 reject 帶 `code` 之 `Error`。
+- 環境變數：
+  - `W_BIN_CACHE=<資料夾>`：快取改放 `<資料夾>/w-kriging/`(套件所在之 `node_modules` 唯讀時使用，多套件可共用同一資料夾)。
+  - `W_BIN_MIRROR=<資料夾或 http(s) 網址>`：內網鏡像，先找鏡像再連 GitHub；結構為 `<鏡像>/w-kriging/<sha256>/kriging.exe`。鏡像之檔同樣以清單校驗，不符即不用。
+  - `W_BIN_OFFLINE=1`：不連網，只用快取與鏡像；缺檔時錯誤(`E_OFFLINE_MISSING`)會列出缺哪個檔、sha256、大小與應放之完整路徑。
+- 離線部署：
+  1. 在可連網之電腦設 `W_BIN_CACHE=<空資料夾>`，執行一次 `ensureBins()`(或使用到 `WKriging` 一次)。
+  2. 把該資料夾整個帶到內網電腦，設 `W_BIN_MIRROR=<該資料夾>`(全離線時另設 `W_BIN_OFFLINE=1`)。
+- 舊版(1.0.39 以前)於執行時自 GitHub 主幹 `src/kriging.exe` 下載；該舊路徑檔仍保留於 repo(不入 npm 包)，供舊版使用。`w-kriging/src/autoDownloadFiles.mjs` 已標為 `@deprecated`，保留供既有之深層匯入者，內部改經 `ensureBins`。
+
+```alias
+import ensureBins from 'w-kriging/src/ensureBins.mjs'
+//import WKriging from 'w-kriging' => WKriging.ensureBins 亦同
+
+//部署前預先取得, resolve回傳{ 'kriging.exe': 絕對路徑 }
+let bins = await ensureBins()
+console.log(bins)
+```
+
 ## Installation
 
 ### Using npm(ES6 module):
