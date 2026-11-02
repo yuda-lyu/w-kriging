@@ -1,15 +1,22 @@
 node_modules
-srcPython/build
-srcPython/dist
-src/kriging.exe
-/bin/*
-!/bin/manifest.json
-/bin-cache/
-/test/_tmp/
+test/_tmp
 .agents
-.opencode
-.claude
 CLAUDE*.md
 AGENTS*.md
 .env
 tmp
+.opencode
+.claude
+srcPython/build
+srcPython/dist
+/bin-cache/
+
+# 以上同步自.gitignore(npm有.npmignore時不讀.gitignore, 故完整抄錄; .gitignore改動時須同步)
+# 以下為dspec 自有套件之npm發布範圍 原則2第1條(外部執行檔與其附屬; 外部執行檔之存放下載校驗與離線 S1、S2)之排除項
+
+# 第1條: 舊路徑之外部執行檔(舊版自主幹下載而保留於repo, 不入包)
+src/kriging.exe
+
+# 第1條: bin/下之外部執行檔不入包, 只保留清單bin/manifest.json
+/bin/*
+!/bin/manifest.json

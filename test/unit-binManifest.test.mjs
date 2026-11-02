@@ -88,21 +88,39 @@ describe(`bin/manifest.json`, function() {
         assert.strict.deepStrictEqual([b.sha256, b.size], [a.sha256, a.size])
     })
 
-    it(`should not pack external executables into the npm package, only bin/manifest.json (S1, S5, T1)`, function() {
-        //先放誘餌檔使缺規則時確定性變紅(測試平行執行時他檔之暫存檔不得影響本案): test/_tmp與bin-cache各放一個
-        fs.mkdirSync(`${fdt}/leak`, { recursive: true })
-        fs.writeFileSync(`${fdt}/leak/kriging.exe`, 'x')
-        mkCache = !fs.existsSync(fdCache)
-        fs.mkdirSync(`${fdCache}/_probe_T1`, { recursive: true })
-        fs.writeFileSync(`${fdCache}/_probe_T1/kriging.exe`, 'x')
-        let r = JSON.parse(execSync('npm pack --dry-run --json', { encoding: 'utf8', windowsHide: true, stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 64 * 1024 * 1024 }))
-        let info = Array.isArray(r) ? r[0] : Object.values(r)[0] //npm 11以前為陣列, npm 12起為以套件名為鍵之物件
-        let fps = info.files.map((v) => v.path)
-        assert.strict.deepStrictEqual(fps.filter((v) => /\.(exe|dll|msi|zip|7z|\d{3})$/i.test(v)), [])
-        assert.strict.deepStrictEqual(fps.filter((v) => v.startsWith('bin/') || v.startsWith('bin-cache/')), ['bin/manifest.json'])
-        assert.strict.equal(fps.includes('src/kriging.exe'), false) //舊路徑檔保留於repo但不入包
-        assert.strict.deepStrictEqual(fps.filter((v) => v.startsWith('test/_tmp/') || v.startsWith('sgud/') || v.startsWith('tmp/')), [])
-        assert.strict.equal(fps.includes('bin/manifest.json'), true) //清單須隨包發布(釘選之校驗依據)
+    //規格: dspec 自有套件之npm發布範圍 原則1、原則2〈套件測試之npm包檢查〉(2026-11-02使用者裁示A)
+    //  ①不得入包只列外部執行檔與壓縮檔、bin/除manifest.json外之檔、CLAUDE*.md、tmp/、test/_tmp/、.env; sgud/、docs/、test/、toolg/等git版控內容依原則1隨包, 不斷言其不在
+    //  ②大小上限只計執行期之src/、dist/、bin/; 本套件原無大小斷言, 未新增
+    describe(`npm pack --dry-run list`, function() {
+        let fps = []
+
+        before(function() {
+            //先放誘餌檔使缺規則時確定性變紅(測試平行執行時他檔之暫存檔不得影響本案): test/_tmp與bin-cache各放一個
+            fs.mkdirSync(`${fdt}/leak`, { recursive: true })
+            fs.writeFileSync(`${fdt}/leak/kriging.exe`, 'x')
+            mkCache = !fs.existsSync(fdCache)
+            fs.mkdirSync(`${fdCache}/_probe_T1`, { recursive: true })
+            fs.writeFileSync(`${fdCache}/_probe_T1/kriging.exe`, 'x')
+            let r = JSON.parse(execSync('npm pack --dry-run --json', { encoding: 'utf8', windowsHide: true, stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 64 * 1024 * 1024 }))
+            let info = Array.isArray(r) ? r[0] : Object.values(r)[0] //npm 11以前為陣列, npm 12起為以套件名為鍵之物件
+            fps = info.files.map((v) => v.path)
+        })
+
+        it(`should not pack external executables nor archives into the npm package, only bin/manifest.json (S1, S5, T1; dspec npm發布範圍 原則2 npm包檢查①)`, function() {
+            assert.strict.equal(fps.length > 0, true)
+            assert.strict.deepStrictEqual(fps.filter((v) => /\.(exe|dll|node|msi|zip|7z|gz|tgz|\d{3})$/i.test(v)), [])
+            assert.strict.deepStrictEqual(fps.filter((v) => v.startsWith('bin/') || v.startsWith('bin-cache/')), ['bin/manifest.json'])
+            assert.strict.equal(fps.includes('src/kriging.exe'), false) //舊路徑檔保留於repo但不入包
+            assert.strict.deepStrictEqual(fps.filter((v) => /(^|\/)CLAUDE[^/]*\.md$/.test(v)), []) //CLAUDE*.md不入版控亦不入包
+            assert.strict.deepStrictEqual(fps.filter((v) => v.startsWith('test/_tmp/') || v.startsWith('tmp/') || v === '.env'), [])
+            assert.strict.equal(fps.includes('bin/manifest.json'), true) //清單須隨包發布(釘選之校驗依據)
+        })
+
+        it(`should pack git-tracked sgud/ and test/tools/ with the package (dspec npm發布範圍 原則1、原則4)`, function() {
+            assert.strict.equal(fps.includes('sgud/state/state.md'), true) //sgud/隨包, 一律不排除
+            assert.strict.equal(fps.some((v) => v.startsWith('test/tools/')), true) //下游會深層取用test/tools/, 一律不排除
+        })
+
     })
 
 })
