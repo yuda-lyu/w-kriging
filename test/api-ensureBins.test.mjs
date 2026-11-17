@@ -214,7 +214,8 @@ describe(`ensureBins`, function() {
         assert.strict.deepStrictEqual(listFiles(cacheDir2), [])
     })
 
-    it(`T6: W_BIN_OFFLINE=1 without cache or mirror is E_OFFLINE_MISSING naming the file, sha256, size and the path to place it (O3, D3)`, async function() {
+    //規格 T6/O3(2026-11-18改)與〈輸入參數之檢測機制〉V20: 訊息只列缺哪個檔(名稱)與準備方法, 不帶sha256、大小、路徑與網址; 這些改放錯誤物件之結構欄位err.missing[](結構欄位屬契約, 不在「訊息」之限)
+    it(`T6: W_BIN_OFFLINE=1 without cache or mirror is E_OFFLINE_MISSING naming only the file in the message, and the sha256, size and the path to place it are in err.missing[] (O3, D3, V20)`, async function() {
         process.env.W_BIN_OFFLINE = '1'
         process.env.W_BIN_CACHE = path.join(fdt, `shared${seq}`)
         let err = await ensureBins({ fetch: noNet })
@@ -225,26 +226,40 @@ describe(`ensureBins`, function() {
         assert.strict.equal(nNet, 0)
         assert.strict.equal(urls.length, 0)
 
+        //結構欄位err.missing[](原案由訊息驗之資訊: 哪個檔、sha256、大小、應放之快取路徑)
         //D3: 共用快取之結構為<W_BIN_CACHE>/<套件>/<sha256>/<name>
+        assert.strict.equal(Array.isArray(err.missing), true)
+        assert.strict.equal(err.missing.length, 1)
         let m = err.missing[0]
         assert.strict.equal(m.name, name)
         assert.strict.equal(m.sha256, ent.sha256)
         assert.strict.equal(m.size, ent.size)
         assert.strict.equal(m.cachePath, path.join(process.env.W_BIN_CACHE, manifest.pkg, ent.sha256, name))
-        for (let s of [name, ent.sha256, String(ent.size), m.cachePath]) {
-            assert.strict.equal(err.message.includes(s), true, `message should include [${s}]`)
-        }
+        assert.strict.equal(m.mirrorPath, null) //未設鏡像
+        assert.strict.equal(m.url, `https://raw.githubusercontent.com${urlPath}`) //自有檔之釘選提交網址
+        assert.strict.equal(m.bundle, null) //單一檔非檔案組
+
+        //訊息: 含缺檔之檔名; 不含sha256、快取路徑與快取資料夾
+        assert.strict.equal(err.message.includes(name), true, err.message)
+        assert.strict.equal(err.message.includes(ent.sha256), false, err.message)
+        assert.strict.equal(err.message.includes(m.cachePath), false, err.message)
+        assert.strict.equal(err.message.includes(process.env.W_BIN_CACHE), false, err.message)
     })
 
-    it(`T6: with an offline mirror configured, the error also names the mirror path (O3, O1)`, async function() {
+    it(`T6: with an offline mirror configured, the mirror path is in err.missing[] and not in the message (O3, O1, V20)`, async function() {
         let fdMirror = path.join(fdt, `mirror${seq}`) //不存在之鏡像
         let err = await ensureBins({ fetch: noNet, cacheDir, mirror: fdMirror, offline: true })
             .then(() => null)
             .catch((e) => e)
         assert.strict.equal(err && err.code, 'E_OFFLINE_MISSING', err && err.message)
         let fpMirror = path.join(fdMirror, manifest.pkg, ent.sha256, name)
+        assert.strict.equal(err.missing.length, 1)
+        assert.strict.equal(err.missing[0].name, name)
         assert.strict.equal(err.missing[0].mirrorPath, fpMirror)
-        assert.strict.equal(err.message.includes(fpMirror), true)
+        assert.strict.equal(err.missing[0].cachePath, path.join(cacheDir, ent.sha256, name))
+        assert.strict.equal(err.message.includes(name), true, err.message)
+        assert.strict.equal(err.message.includes(fpMirror), false, err.message)
+        assert.strict.equal(err.message.includes(fdMirror), false, err.message)
     })
 
     it(`T7: a tampered cache file is refused and fetched again (D4)`, async function() {
@@ -450,18 +465,34 @@ describe(`WKriging when the executable cannot be obtained`, function() {
         let err = await ensureBins().then(() => null).catch((e) => e)
         assert.strict.equal(err instanceof Error, true)
         assert.strict.equal(err.code, 'E_OFFLINE_MISSING', err.message)
+        //V20: 應放之位置在err.missing[](結構欄位), 此處之快取與鏡像皆設於本describe之before
+        let cachePath = path.join(fdt, 'cache', manifest.pkg, ent.sha256, 'kriging.exe')
+        let mirrorPath = path.join(fdt, 'mirror', manifest.pkg, ent.sha256, 'kriging.exe')
+        assert.strict.deepStrictEqual(err.missing.map((v) => [v.name, v.sha256, v.size, v.cachePath, v.mirrorPath]), [['kriging.exe', ent.sha256, ent.size, cachePath, mirrorPath]])
     })
 
-    it(`WKriging keeps rejecting with a string, now "[code] message" naming the file, sha256, size and where to place it`, async function() {
+    it(`WKriging keeps rejecting with a string, now "[code] file: fixed note" naming only the file and pointing to err.missing[] of ensureBins() for where to place it (V20)`, async function() {
         if (!isWindows()) {
             this.skip()
         }
         let err = await WKriging([{ x: 0, y: 0, z: 0 }], { x: 1, y: 1 }).then(() => null).catch((e) => e)
-        assert.strict.equal(typeof err, 'string')
+        assert.strict.equal(typeof err, 'string') //既有之reject型態為字串
         assert.strict.equal(err.startsWith('[E_OFFLINE_MISSING] '), true, err)
-        for (let s of ['kriging.exe', ent.sha256, String(ent.size), path.join(fdt, 'cache', manifest.pkg, ent.sha256, 'kriging.exe')]) {
-            assert.strict.equal(err.includes(s), true, `message should include [${s}]`)
-        }
+
+        //V20: 字串只含檔名與固定之離線準備說明(呼叫ensureBins()讀err.missing[]), 不含sha256、大小、快取與鏡像路徑
+        let cachePath = path.join(fdt, 'cache', manifest.pkg, ent.sha256, 'kriging.exe')
+        let mirrorPath = path.join(fdt, 'mirror', manifest.pkg, ent.sha256, 'kriging.exe')
+        assert.strict.equal(err, '[E_OFFLINE_MISSING] kriging.exe: missing from the cache and the mirror while offline; for offline preparation call ensureBins() and read err.missing[] (cachePath, mirrorPath) to get where to put it')
+        assert.strict.equal(err.includes(ent.sha256), false, err)
+        assert.strict.equal(err.includes(cachePath), false, err)
+        assert.strict.equal(err.includes(mirrorPath), false, err)
+        assert.strict.equal(err.includes(path.join(fdt, 'cache')), false, err)
+
+        //字串所指引之作法可行(原案由字串驗之sha256與應放位置, 改由其指引之ensureBins()之err.missing[]驗)
+        let eb = await ensureBins({ names: 'kriging.exe' }).then(() => null).catch((e) => e)
+        assert.strict.equal(eb instanceof Error, true)
+        assert.strict.equal(eb.code, 'E_OFFLINE_MISSING', eb.message)
+        assert.strict.deepStrictEqual(eb.missing.map((v) => [v.name, v.sha256, v.size, v.cachePath, v.mirrorPath]), [['kriging.exe', ent.sha256, ent.size, cachePath, mirrorPath]])
         assert.strict.deepStrictEqual(netCalls, [])
     })
 

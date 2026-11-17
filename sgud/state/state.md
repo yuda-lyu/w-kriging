@@ -17,5 +17,6 @@
 - 測試: `test/unit-binManifest.test.mjs`(T1、T2、釘選提交內位元組、S2、D1/E2、rollup)、`test/api-ensureBins.test.mjs`(T3~T7、環境變數、預設快取與 cwd 無關、`floatingManifestUrl` 不轉傳、`autoDownloadFiles`、交換檔落點、reject 型態;本機 HTTP 127.0.0.1:8943)、`test/2d.test.mjs`、`test/3d.test.mjs`.T8 不適用(非主幹模式).
 - 打包檢查(2026-11-02,pk-kriging): `test/unit-binManifest.test.mjs` 之 `npm pack --dry-run` 案已依 dspec `自有套件之npm發布範圍.md` 原則 2〈套件測試之 npm 包檢查〉①改寫:不得入包只列外部執行檔與壓縮檔、`bin/` 除清單外之檔、`CLAUDE*.md`、`tmp/`、`test/_tmp/`、`.env`;`sgud/state/state.md`、`test/tools/` 須隨包;無包大小斷言(②口徑只計 `src/`、`dist/`、`bin/`,現況 6 檔 298,543 B,待主控裁示是否新增門檻).`.npmignore` 首段抄 `.gitignore`、其後只有第 1 條之 `src/kriging.exe`、`/bin/*`、`!/bin/manifest.json`;包清單 84 檔(改前後相同).
 - 驗證(bin-kriging,2026-10-28 最終碼): 見主控任務 20261028054319 `agent-out/bin-kriging-修正報告.md`.
+- 離線缺檔訊息(2026-11-18,wsemi 1.9.64 V20 連動,eb1):`E_OFFLINE_MISSING` 之訊息只列檔名與準備方法,sha256、大小、`cachePath`、`mirrorPath`、來源網址改由 `err.missing[]` 讀取;`WKriging` 之字串 reject 於離線缺檔時改為檔名＋固定說明(不改字串型態,其他錯誤碼仍 `[code] message`);`test/api-ensureBins.test.mjs` 之 T6 與字串案改驗結構欄位與固定字串,README〈外部執行檔〉已補 `err.missing[]` 範例.
 - 待辦: 主控發布新版(含 `dist` 重建);舊版淘汰後移除 `src/kriging.exe`(另案);裁示 `test for 2d2` 之期望值.
 - 已知限制: 見 R-BIN-EXE-01〈已知限制〉.

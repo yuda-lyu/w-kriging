@@ -28,6 +28,32 @@ function isWindows() {
 }
 
 
+//rejectOfBins, 取不到kriging.exe時之字串reject內容: `[錯誤碼] 說明`
+//離線缺檔(E_OFFLINE_MISSING)只寫缺哪個檔(名稱)與固定之準備說明, 不帶路徑、網址與sha256(輸入參數之檢測機制V20);
+//應放之位置(cachePath、mirrorPath)與sha256、大小等在ensureBins()所拒絕之錯誤物件的err.missing[](結構欄位), 字串無此欄位故以固定說明指引呼叫ensureBins()讀取
+function rejectOfBins(err) {
+    let code = get(err, 'code', '')
+    if (code === 'E_OFFLINE_MISSING') {
+        let names = []
+        let missing = get(err, 'missing', [])
+        if (isearr(missing)) {
+            each(missing, (m) => {
+                let n = get(m, 'name', '')
+                if (isestr(n)) {
+                    names.push(n)
+                }
+            })
+        }
+        if (names.length === 0) {
+            names.push(fnExe)
+        }
+        return `[${code}] ${names.join(', ')}: missing from the cache and the mirror while offline; for offline preparation call ensureBins() and read err.missing[] (cachePath, mirrorPath) to get where to put it`
+    }
+    let msg = get(err, 'message', cstr(err))
+    return isestr(code) ? `[${code}] ${msg}` : msg
+}
+
+
 /**
  * Kriging內外插值，支援2D與3D
  *
@@ -40,7 +66,7 @@ function isWindows() {
  * @param {String} [opt.keyV='v'] 輸入點物件之v欄位字串，為觀測值，預設'v'
  * @param {String} [opt.variogram_model='exponential'] 輸入變異圖模式字串，可選'linear'、'power'、'gaussian'、'spherical'、'exponential'、'hole-effect'，其定義詳見pykrige，預設'exponential'
  * @param {Integer} [opt.nlags=9] 輸入變異圖統計直條圖數量整數，其定義詳見pykrige，預設9
- * @returns {Promise} 回傳Promise，resolve回傳成功訊息，reject回傳錯誤訊息
+ * @returns {Promise} 回傳Promise，resolve回傳成功訊息，reject回傳錯誤訊息(字串；取不到kriging.exe時為`[錯誤碼] 說明`，離線缺檔(E_OFFLINE_MISSING)之說明只含檔名與固定之準備說明，不帶路徑與sha256，應放之位置請呼叫WKriging.ensureBins()讀其錯誤之err.missing[]之cachePath與mirrorPath)
  * @example
  *
  * async function test2d1() {
@@ -295,16 +321,14 @@ async function WKriging(psSrc, psTar, opt = {}) {
     nlags = cint(nlags)
 
     //prog, 經ensureBins取得kriging.exe(依bin/manifest.json校驗, 首次使用時自鏡像或GitHub取得, 之後自快取取得),
-    //取不到時維持本函數既有之字串reject, 內容為[code] message
+    //取不到時維持本函數既有之字串reject, 內容為[code] message(離線缺檔時為檔名與固定說明, 不帶路徑與sha256, 見rejectOfBins)
     let prog = ''
     try {
         let bins = await ensureBins({ names: fnExe })
         prog = bins[fnExe]
     }
     catch (err) {
-        let code = get(err, 'code', '')
-        let msg = get(err, 'message', cstr(err))
-        return Promise.reject(isestr(code) ? `[${code}] ${msg}` : msg)
+        return Promise.reject(rejectOfBins(err))
     }
     // console.log('prog', prog)
 

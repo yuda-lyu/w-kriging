@@ -2,6 +2,10 @@
 
 本檔為執行工作時特有之累積經驗,留給後續之嘗試、執行與判斷,由agent自行編列、擴充與維護.過長時抽出舊者為`experience_<年月日>.md`,並於本檔註明何時抽出.
 
+## 離線缺檔訊息改結構欄位(eb1,2026-11-18)
+
+- wsemi 1.9.64 起 `E_OFFLINE_MISSING` 訊息不帶值(V20):T6 兩案由訊息驗 sha256、大小、路徑改驗 `err.missing[0]`(`mirrorPath` 於未設鏡像為 `null`,故鏡像位置另以設了鏡像之案驗);`WKriging` 之字串 reject 不再轉述 wsemi 之訊息(其指向「this error 之 missing 欄位」,字串沒有),離線缺檔時改為 `[E_OFFLINE_MISSING] kriging.exe: <固定說明>`,測試以全文相等守住並實跑字串所指引之 `ensureBins()` 驗放置位置.
+
 ## 打包檢查測試改寫(pk-kriging,2026-11-02)
 
 - **紅燈成因**:全庫連動(第 262 項批次)調整 `.npmignore` 後 `sgud/` 已隨包,舊斷言「`sgud/` 不得入包」變紅(改前 32 過 1 敗);規格改為 `sgud/`、`docs/`、`test/`、`toolg/` 等 git 版控內容隨包,只有外部執行檔與壓縮檔、`bin/` 除清單外之檔、`CLAUDE*.md`、`tmp/`、`test/_tmp/`、`.env` 不得入包(dspec `自有套件之npm發布範圍.md` 原則 2〈套件測試之 npm 包檢查〉①).
